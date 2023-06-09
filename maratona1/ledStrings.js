@@ -28,15 +28,14 @@ function main() {
   let [vertices, arestas] = lines[0].split(" ").map((value) => +value);
 
   let adjacencia = [];
-  for (let i = 0; i < vertices; i++) {
-    adjacencia[i] = [];
-  }
 
   for (let i = 1; i < lines.length; i++) {
     let [from, to] = lines[i].split(" ");
     from = +from - 1;
     to = +to - 1;
 
+    if (adjacencia[from] === undefined) adjacencia[from] = [];
+    if (adjacencia[to] === undefined) adjacencia[to] = [];
     adjacencia[from].push(to);
     adjacencia[to].push(from);
   }

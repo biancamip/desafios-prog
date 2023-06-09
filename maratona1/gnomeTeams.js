@@ -2,10 +2,21 @@ var input = `6
 Josh 56
 Alfred 32
 Joshua 34
-Harley 61
-Peggy 60
+Tarley 61
+Peggy 61
 Jim 25`;
 var lines = input.split("\n");
+/* expected:
+Time 1
+Harley 61
+Josh 56
+Alfred 32
+
+Time 2
+Peggy 60
+Joshua 34
+Jim 2
+*/
 
 class MaxHeapGnomes {
   gnomes /* {name: string, age: number} */ = [];
@@ -19,11 +30,14 @@ class MaxHeapGnomes {
   }
 
   insert(gnome) {
-    let insertIdx = this._binarySearch(gnome.age);
+    let insertIdx = this._binarySearch(gnome);
     this.gnomes.splice(insertIdx, 0, gnome);
   }
 
-  _binarySearch(val) {
+  _binarySearch(gnome) {
+    let name = gnome.name;
+    let val = gnome.age;
+
     let low = 0;
     let high = this.gnomes.length - 1;
 
@@ -32,7 +46,11 @@ class MaxHeapGnomes {
       let currVal = this.gnomes[mid].age;
 
       if (currVal === val) {
-        return mid;
+        if (this.gnomes[mid].name.localeCompare(name) >= 0) {
+          low = mid + 1;
+        } else {
+          return mid;
+        }
       } else if (currVal > val) {
         high = mid - 1;
       } else {
@@ -50,13 +68,33 @@ function main() {
   let gnomesHeap = new MaxHeapGnomes();
   for (let i = 1; i <= numGnomes; i++) {
     let [name, age] = lines[i].split(" ");
-    age = +age;
-
-    gnomesHeap.insert({ name, age });
+    gnomesHeap.insert({ name, age: +age });
   }
 
-  console.log(gnomesHeap);
-  console.log(gnomesHeap.pop(), "should be harley");
+  let numTeams = numGnomes / 3;
+  let teams /*: Array<leader: Gnome, delivery: Gnome, driver: Gnome> */ = [];
+
+  for (let i = 0; i < numTeams; i++) {
+    teams[i] = { leader: gnomesHeap.pop() };
+  }
+
+  for (let i = 0; i < numTeams; i++) {
+    let team = teams[i];
+    teams[i] = { ...team, delivery: gnomesHeap.pop() };
+  }
+
+  for (let i = 0; i < numTeams; i++) {
+    let team = teams[i];
+    teams[i] = { ...team, driver: gnomesHeap.pop() };
+  }
+
+  teams.map((team, idx) => {
+    console.log(`Time ${idx + 1}`);
+    console.log(`${team.leader.name} ${team.leader.age}`);
+    console.log(`${team.delivery.name} ${team.delivery.age}`);
+    console.log(`${team.driver.name} ${team.driver.age}`);
+    console.log("");
+  });
 }
 
 main();

@@ -32,7 +32,6 @@ function main() {
 
     idx++;
     let numbers = lines[idx].split(" ");
-    //.map((value) => +value);
 
     idx++;
     let output = "";

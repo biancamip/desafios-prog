@@ -10,8 +10,9 @@ const input = `3 1
 1 2 3`;
 const lines = input.split("\n");
 
+// todo minheappairs
 class MinHeap {
-  heapValues = [];
+  heapValues /*: Array<{cost: number, vertex: number}> */ = [];
 
   constructor() {
     this.heapValues = [];
@@ -22,7 +23,7 @@ class MinHeap {
   }
 
   insert(val) {
-    let insertIdx = this._binarySearch(val);
+    let insertIdx = this._binarySearch(val.cost);
     this.heapValues.splice(insertIdx, 0, val);
   }
 
@@ -31,15 +32,15 @@ class MinHeap {
     let high = this.heapValues.length - 1;
 
     while (low <= high) {
-      let mid = Math.floor((low + high) / 2);
-      let curr = this.heapValues[mid];
+      let midIdx = Math.floor((low + high) / 2);
+      let currCost = this.heapValues[midIdx].cost;
 
-      if (curr === val) {
-        return mid;
-      } else if (curr < val) {
-        high = mid - 1;
+      if (currCost === val) {
+        return midIdx;
+      } else if (currCost < val) {
+        high = midIdx - 1;
       } else {
-        low = mid + 1;
+        low = midIdx + 1;
       }
     }
 
@@ -52,16 +53,32 @@ function main() {
 
   while (idx < lines.length) {
     let [cities, routes] = lines[idx].split(" ").map((v) => +v);
-
-    for (let i = idx + 1; i < idx + 1 + routes; i++) {
-      let [from, to] = lines[i].split(" ").map((v) => +v);
-    }
-
     let [source, target, forbidden] = lines[idx + 1 + routes]
       .split(" ")
-      .map((v) => +v);
+      .map((v) => +v - 1);
+
+    let adjGraph /* Array<{ cost: number, vertex: number }> */ = Array(cities);
+    let predecessors = Array(cities);
+
+    for (let i = idx + 1; i < idx + 1 + routes; i++) {
+      let [from, to] = lines[i].split(" ").map((v) => +v - 1);
+
+      if (from !== forbidden && to !== forbidden) {
+        let aux = adjGraph[from] === undefined ? [] : adjGraph[from];
+        aux.push({ cost: 1, vertex: to });
+        adjGraph[from] = aux;
+      }
+    }
+
+    // let costs = Array(cities).fill(Number.MAX_SAFE_INTEGER);
+    // let added = Array(cities).fill(0);
+    // let heap /* { cost: number, vertex: number } */ = new MinHeap();
+
+    // costs[source] = 0;
+    // heap.insert({ cost: 0, vertex: source });
 
     idx += 1 + routes + 1;
+    console.log("\n");
   }
 }
 

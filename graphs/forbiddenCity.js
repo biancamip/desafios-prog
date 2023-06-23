@@ -48,11 +48,21 @@ class MinHeap {
 }
 
 function main() {
-  let heap = new MinHeap();
-  heap.insert(10);
-  heap.insert(2);
-  heap.insert(8);
-  console.log(heap.pop(), "should be 2");
+  let idx = 0;
+
+  while (idx < lines.length) {
+    let [cities, routes] = lines[idx].split(" ").map((v) => +v);
+
+    for (let i = idx + 1; i < idx + 1 + routes; i++) {
+      let [from, to] = lines[i].split(" ").map((v) => +v);
+    }
+
+    let [source, target, forbidden] = lines[idx + 1 + routes]
+      .split(" ")
+      .map((v) => +v);
+
+    idx += 1 + routes + 1;
+  }
 }
 
 main();

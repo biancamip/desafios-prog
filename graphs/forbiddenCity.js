@@ -10,12 +10,15 @@ const input = `3 1
 1 2 3`;
 const lines = input.split("\n");
 
-// todo minheappairs
 class MinHeap {
   heapValues /*: Array<{cost: number, vertex: number}> */ = [];
 
   constructor() {
     this.heapValues = [];
+  }
+
+  empty() {
+    return this.heapValues.length === 0;
   }
 
   pop() {
@@ -52,33 +55,55 @@ function main() {
   let idx = 0;
 
   while (idx < lines.length) {
+    if (lines[idx] === undefined) break;
     let [cities, routes] = lines[idx].split(" ").map((v) => +v);
+
+    if (lines[idx + 1 + routes] === undefined) break;
     let [source, target, forbidden] = lines[idx + 1 + routes]
       .split(" ")
       .map((v) => +v - 1);
 
-    let adjGraph /* Array<{ cost: number, vertex: number }> */ = Array(cities);
-    let predecessors = Array(cities);
+    let adjGraph /* Array<{ cost: number, vertex: number }> */ = Array(
+      cities
+    ).fill([]);
 
     for (let i = idx + 1; i < idx + 1 + routes; i++) {
       let [from, to] = lines[i].split(" ").map((v) => +v - 1);
 
-      if (from !== forbidden && to !== forbidden) {
-        let aux = adjGraph[from] === undefined ? [] : adjGraph[from];
-        aux.push({ cost: 1, vertex: to });
-        adjGraph[from] = aux;
+      let aux = [...adjGraph[from]];
+      aux.push({ cost: 1, vertex: to });
+      adjGraph[from] = aux;
+    }
+
+    let costs = Array(cities).fill(Number.MAX_SAFE_INTEGER);
+    let added = Array(cities).fill(false);
+    let predecessors = Array(cities).fill(0);
+    predecessors[source] = source;
+    costs[source] = 0;
+
+    let heap /* { cost: number, vertex: number } */ = new MinHeap();
+    heap.insert({ cost: 0, vertex: source });
+    while (!heap.empty()) {
+      let heapTop = heap.pop();
+      let vertex = heapTop.vertex;
+      added[vertex] = true;
+
+      for (let i = 0; i < adjGraph[vertex].length; i++) {
+        let adjacentVertex = adjGraph[vertex][i].vertex;
+        if (
+          adjacentVertex !== forbidden &&
+          !added[adjacentVertex] &&
+          adjGraph[vertex][i].cost + costs[vertex] < costs[adjacentVertex]
+        ) {
+          costs[adjacentVertex] = adjGraph[vertex][i].cost + costs[vertex];
+          heap.insert({ cost: costs[adjacentVertex], vertex: adjacentVertex });
+          predecessors[adjacentVertex] = vertex;
+        }
       }
     }
 
-    // let costs = Array(cities).fill(Number.MAX_SAFE_INTEGER);
-    // let added = Array(cities).fill(0);
-    // let heap /* { cost: number, vertex: number } */ = new MinHeap();
-
-    // costs[source] = 0;
-    // heap.insert({ cost: 0, vertex: source });
-
+    console.log(costs[target]);
     idx += 1 + routes + 1;
-    console.log("\n");
   }
 }
 

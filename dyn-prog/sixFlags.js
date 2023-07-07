@@ -16,8 +16,12 @@ const lines = input.split("\n");
 let availableTime = 0;
 let numRides = 0;
 let rides = [];
+let solutionMap = new Map();
 
 function mochilaRec(rideNum, duration) {
+  let cached = solutionMap.get(`${rideNum}-${duration}`);
+  if (cached !== undefined) return cached;
+
   if (rideNum === numRides) return 0;
 
   let solutionPoints = mochilaRec(rideNum + 1, duration);
@@ -40,6 +44,7 @@ function mochilaRec(rideNum, duration) {
     rideRepetitions++;
   }
 
+  solutionMap.set(`${rideNum}-${duration}`, solutionPoints);
   return solutionPoints;
 }
 
@@ -52,13 +57,15 @@ function main() {
     console.log(`Instancia ${instance}`);
 
     rides = [];
+    solutionMap = new Map();
     for (let i = idx + 1; i < idx + numRides + 1; i++) {
       let [duration, points] = lines[i].split(" ").map((v) => +v);
       rides.push({ duration: duration, points: points });
     }
 
     let solution = mochilaRec(0, availableTime);
-    console.log(solution, "\n");
+    console.log(solution);
+    console.log();
 
     // next instance
     instance++;

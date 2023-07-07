@@ -57,7 +57,6 @@ function main() {
       rides.push({ duration: duration, points: points });
     }
 
-    rides.sort((a, b) => b.points - a.points);
     let solution = mochilaRec(0, availableTime);
     console.log(solution, "\n");
 

@@ -39,15 +39,6 @@ function mochilaRec(rideNum, duration) {
 
     rideRepetitions++;
   }
-  //   if (rides[rideNum].duration <= duration) {
-  //     let solutionPointsTemp =
-  //       rides[rideNum].points +
-  //       mochilaRec(rideNum + 1, duration - rides[rideNum].duration);
-
-  //     if (solutionPoints < solutionPointsTemp) {
-  //       solutionPoints = solutionPointsTemp;
-  //     }
-  //   }
 
   return solutionPoints;
 }
@@ -60,19 +51,13 @@ function main() {
   while (numRides !== 0) {
     console.log(`Instancia ${instance}`);
 
-    // instance init
-    // ridesPoints = [];
-    // ridesDurations = [];
     rides = [];
     for (let i = idx + 1; i < idx + numRides + 1; i++) {
       let [duration, points] = lines[i].split(" ").map((v) => +v);
       rides.push({ duration: duration, points: points });
-      //   ridesDurations.push(duration);
-      //   ridesPoints.push(points);
     }
 
     rides.sort((a, b) => b.points - a.points);
-    console.log(rides);
     let solution = mochilaRec(0, availableTime);
     console.log(solution, "\n");
 
